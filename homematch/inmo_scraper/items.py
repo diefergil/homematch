@@ -8,36 +8,37 @@ import scrapy
 
 class PropertyCard(scrapy.Item):
     # Resource
-    page_source = scrapy.Field()
-    resource_title = scrapy.Field()
-    resource_country = scrapy.Field()
-    operation_type = scrapy.Field()
+    page_source = scrapy.Field(default=None)
+    resource_title = scrapy.Field(default=None)
+    resource_country = scrapy.Field(default=None)
+    operation_type = scrapy.Field(default=None)
 
     # Property
-    active = scrapy.Field()
-    url = scrapy.Field()
-    title = scrapy.Field()
-    subtitle = scrapy.Field()
-    zone = scrapy.Field()
+    active = scrapy.Field(default=None)
+    url = scrapy.Field(default=None)
+    title = scrapy.Field(default=None)
+    normalized_title = scrapy.Field(default=None)
+    subtitle = scrapy.Field(default=None)
+    zone = scrapy.Field(default=None)
 
     # Price
-    current_price = scrapy.Field()
-    drop_price = scrapy.Field()
-    percentage_drop_price = scrapy.Field()
+    current_price = scrapy.Field(default=None)
+    drop_price = scrapy.Field(default=None)
+    percentage_drop_price = scrapy.Field(default=None)
 
     # Details
-    ad_text = scrapy.Field()
-    basic_info = scrapy.Field()
-    last_update = scrapy.Field()
+    ad_text = scrapy.Field(default=None)
+    basic_info = scrapy.Field(default=None)
+    last_update = scrapy.Field(default=None)
 
     # Multimedia
-    main_image_url = scrapy.Field()
+    main_image_url = scrapy.Field(default=None)
 
     # Additional
-    published = scrapy.Field()
-    scraped_ts = scrapy.Field()
+    published = scrapy.Field(default=None)
+    scraped_ts = scrapy.Field(default=None)
 
     # DB
-    insert_timestamp = scrapy.Field()
-    update_timestamp = scrapy.Field()
-    pipeline_ts = scrapy.Field()
+    insert_timestamp = scrapy.Field(default=None)
+    update_timestamp = scrapy.Field(default=None)
+    pipeline_ts = scrapy.Field(default=None)

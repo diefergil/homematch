@@ -1,5 +1,4 @@
 import datetime
-import random
 
 import scrapy
 
@@ -25,7 +24,7 @@ class PisosdotcomSpider(scrapy.Spider):
 
     def parse(self, response):
         self.current_start_url = response.url
-        if self._stop_following_links == True:
+        if self._stop_following_links:
             self.logger.info(f"Stopping spider at URL {response.url}")
             self._stop_following_links = False
             return
@@ -59,6 +58,7 @@ class PisosdotcomSpider(scrapy.Spider):
         property.add_value("active", True)
         property.add_css("url", "div.ad-preview::attr(data-lnk-href)")
         property.add_css("title", "a.ad-preview__title::text")
+        property.add_css("normalized_title", "a.ad-preview__title::text")
         property.add_css("zone", "p.p-sm::text")
 
         # # Price

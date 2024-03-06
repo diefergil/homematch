@@ -161,3 +161,4 @@ cython_debug/
 
 logs/*.json
 data/*/*.json
+data/*/*.jpg
