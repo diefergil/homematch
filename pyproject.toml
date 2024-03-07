@@ -20,3 +20,121 @@ pre-commit = "^3.6.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = ["tests/unit"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.isort]
+# Black Compatibility
+profile = "black"
+
+
+#####
+# Typing
+#####
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["docs", "notebooks"]
+
+#####
+# Flake8 wrapper with pyproject.toml support
+#####
+
+[tool.flakeheaven]
+exclude = ["README.md"]
+# format = "colored"
+# nicer output
+format = "grouped"
+max_line_length = 50
+show_source = true
+extend-ignore = "E203, W503"
+extended_default_ignore = []
+
+[tool.flakeheaven.plugins]
+flake8-bandit = ["+*", "-S322"]
+flake8-bugbear = ["+*"]
+flake8-builtins = [
+    "+*",
+    "-A003", # Shadowing a python builtin method
+]
+flake8-comprehensions = ["+*"]
+flake8-docstrings = ["-*"]
+flake8-eradicate = ["+*"]
+flake8-isort = ["+*"]
+flake8-mutable = ["+*"]
+flake8-pytest-style = ["+*"]
+flake8-spellcheck = ["-*"]
+mccabe = ["+*"]
+pep8-naming = ["+*"]
+pycodestyle = [
+    "+*",
+    "-E501", # line-too-long
+    "-E203", # whitespace-before-colon
+    "-W503", # line-break-before-binary-operator
+    "-W504", # line-break-after-binary-operator
+]
+pyflakes = ["+*"]
+pylint = ["+*"]
+
+#####
+# Coverage config
+#####
+
+[tool.coverage.run]
+branch = true
+
+# List of file patterns to ignore
+omit = ["tests/", "experimentation/", "examples/", "script/"]
+
+source = ["libs/"]
+
+source_pkgs = ["as_worker", "as_common", "as_scheduler", "as_data_ingestion"]
+
+[tool.coverage.report]
+
+fail_under = 70 # Minimum coverage 70%
+exclude_lines = [ # List of regular expressions to ignore
+    "pragma: no cover",
+    "logger.",
+    "def __repr__",
+]
+precision = 0
+
+# Ignore source code that can’t be found
+ignore_errors = true
+
+# Don’t report files that have no executable code
+skip_empty = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# Don’t include files in the report that are 100% covered
+skip_covered = true
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = [
+    "F",   #Pyflakes
+    "B",   #flake8-bugbear
+    "A",   #flake8-builtins
+    "C4",  #flake8-comprehensions
+    "ERA", #eradicate
+    "I",   #isort
+    "PT",  #flake8-pytest-style
+    "C90", #mccabe
+    "N",   #pep8-naming
+    "E",   #pycodestyle error
+    "PL",  #Pylint
+]
+ignore = ["A003"]
