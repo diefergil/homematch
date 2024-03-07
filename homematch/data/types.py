@@ -21,7 +21,7 @@ class PropertyListingBase(BaseModel):
     main_image_url: HttpUrl
     scraped_ts: str
 
-    @computed_field
+    @computed_field  # type: ignore
     @property
-    def identificator(self) -> int:
+    def identificator(self) -> str:
         return hashlib.sha256(self.url.unicode_string().encode()).hexdigest()[:8]
