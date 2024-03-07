@@ -1,7 +1,15 @@
 import hashlib
+import io
+import logging
+from pathlib import Path
 from typing import List
 
-from pydantic import BaseModel, HttpUrl, computed_field
+from PIL import Image
+from pydantic import BaseModel, Field, HttpUrl, computed_field
+
+from homematch.config import IMAGES_DIR
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyListingBase(BaseModel):
@@ -25,3 +33,31 @@ class PropertyListingBase(BaseModel):
     @property
     def identificator(self) -> str:
         return hashlib.sha256(self.url.unicode_string().encode()).hexdigest()[:8]
+
+
+class PropertyListing(PropertyListingBase):
+    images_dir: Path = Field(IMAGES_DIR, description="Directory to store images")
+
+    @property
+    def image_path(self) -> Path:
+        return self.images_dir / f"{self.identificator}.jpg"
+
+    def load_image(self) -> Image.Image:
+        try:
+            return Image.open(self.image_path)
+        except FileNotFoundError:
+            logger.error(f"Image file not found: {self.image_path}")
+            raise
+
+    @classmethod
+    def pil_to_bytes(cls, img: Image.Image) -> bytes:
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        return buf.getvalue()
+
+
+class PropertyData(PropertyListing):
+    image_bytes: bytes
+
+    def to_pil(self):  # type: ignore
+        return Image.open(io.BytesIO(self.image))
