@@ -1,7 +1,9 @@
 import datetime
 
 import scrapy
+from scrapy.selector import Selector
 
+from homematch.config import SCRAPER_URLS
 from homematch.inmo_scraper.itemloaders.pisosdotcom import CardPisosdotcomItemLoader
 from homematch.inmo_scraper.items import PropertyCard
 
@@ -9,10 +11,7 @@ from homematch.inmo_scraper.items import PropertyCard
 class PisosdotcomSpider(scrapy.Spider):
     name = "pisosdotcom"
     allowed_domains = ["pisos.com"]
-    start_urls = start_urls_base = [
-        # compra
-        "https://www.pisos.com/venta/piso-santa_pola",
-    ]
+    start_urls = start_urls_base = SCRAPER_URLS
 
     start_urls = [url + "/fecharecientedesde-desc/" for url in start_urls_base]
 
@@ -76,7 +75,24 @@ class PisosdotcomSpider(scrapy.Spider):
         )
 
         # multimedia
-        property.add_css("main_image_url", "img::attr(data-src)")
+        carousel_slides = property.get_css(
+            ".carousel__slide:not(.carousel__hidden):not(.u-hide)"
+        )
+        main_image_url = None
+
+        for slide_html in carousel_slides:
+            slide_selector = Selector(text=slide_html)
+            # Check for 'src' attribute first
+            img_src = slide_selector.css("img::attr(src)").get()
+            # If 'src' is not found, check for 'data-src'
+            if not img_src:
+                img_src = slide_selector.css("img::attr(data-src)").get()
+            # If an image source is found, set it as the main image URL and break the loop
+            if img_src:
+                main_image_url = img_src
+                break
+
+        property.add_value("main_image_url", main_image_url)
 
         # metadata
         property.add_value(

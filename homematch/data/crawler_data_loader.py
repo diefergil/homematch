@@ -16,4 +16,8 @@ class CrawlerDataLoader(BaseModel):
         file_path = Path(self.data_dir) / self.file_name
         with open(file_path, "r") as file:
             json_data = json.load(file)
-        return [PropertyListingBase(**item) for item in json_data]
+        return [
+            PropertyListingBase(**item)
+            for item in json_data
+            if item.get("main_image_url") is not None
+        ]

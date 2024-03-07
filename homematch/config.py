@@ -9,3 +9,4 @@ IMAGES_DIR = pathlib.Path(DATA_DIR, "images")
 MODEL_ID = "openai/clip-vit-large-patch14"
 DEVICE = "cuda"
 TABLE_NAME = "properties"
+SCRAPER_URLS = ["https://www.pisos.com/venta/pisos-alicante_alacant/"]

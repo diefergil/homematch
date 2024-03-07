@@ -33,7 +33,7 @@ class PropertyListingBase(BaseModel):
     @computed_field  # type: ignore
     @property
     def identificator(self) -> str:
-        return hashlib.sha256(self.url.encode()).hexdigest()[:8]
+        return hashlib.sha256(self.url.encode()).hexdigest()[:16]
 
     @computed_field  # type: ignore
     @property
@@ -48,8 +48,8 @@ class PropertyListingBase(BaseModel):
 
         description = ""
         description += f"Zone: {self.zone}."
-        description += f"Price: {self.current_price} euros."
-        description += f"Features: {basic_info_text}"
+        description += f"\nPrice: {self.current_price} euros."
+        description += f"\nFeatures: {basic_info_text}"
 
         return description
 

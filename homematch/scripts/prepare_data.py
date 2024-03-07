@@ -41,6 +41,8 @@ def main() -> None:
             properties_data.append(property_data)
         except UnidentifiedImageError as e:
             logger.error(f"Problem with image for {property_listing.title}: {e}")
+        except FileNotFoundError as e:
+            logger.error(f"Problem with image for {property_listing.title}: {e}")
 
     # Convert property data to pandas DataFrame
     logger.info("Converting property data to DataFrame...")
