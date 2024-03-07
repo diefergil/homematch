@@ -163,3 +163,4 @@ logs/*.json
 data/*/*.json
 data/*/*.jpg
 data/properties_dataset/*
+data/.lancedb/*

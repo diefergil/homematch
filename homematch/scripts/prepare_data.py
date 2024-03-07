@@ -1,12 +1,12 @@
 import logging
 
-import pandas as pd
 from datasets import Dataset
 from PIL import UnidentifiedImageError
 
 from homematch.config import DATA_DIR
 from homematch.data.crawler_data_loader import CrawlerDataLoader
 from homematch.data.image_data_donwloader import ImageDataDownloader
+from homematch.data.process_data import process_image
 from homematch.data.types import PropertyData, PropertyListing
 
 # Configure logging
@@ -36,31 +36,19 @@ def main() -> None:
     properties_data = []
     for property_listing in property_listing_list:
         try:
-            image_bytes = PropertyListing.pil_to_bytes(property_listing.load_image())
-            property_data = PropertyData(
-                **property_listing.dict(), image_bytes=image_bytes
-            )
+            image = property_listing.load_image()
+            property_data = PropertyData(**property_listing.dict(), image=image)
             properties_data.append(property_data)
         except UnidentifiedImageError as e:
             logger.error(f"Problem with image for {property_listing.title}: {e}")
 
     # Convert property data to pandas DataFrame
     logger.info("Converting property data to DataFrame...")
-    df = pd.json_normalize(
-        property_data.dict() for property_data in properties_data
-    ).astype(
-        {
-            "page_source": str,
-            "main_image_url": str,
-            "url": str,
-            "images_dir": str,
-        }
-    )
-    logger.info(f"Dataset created successfully with {len(df)} rows")
 
     # Convert pandas DataFrame to Hugging Face Dataset
     logger.info("Converting DataFrame to Hugging Face Dataset...")
-    dataset = Dataset.from_pandas(df)
+    dataset = Dataset.from_list([x.dict() for x in properties_data])
+    dataset = dataset.map(process_image, batched=True, batch_size=4)
 
     # Save dataset
     dataset_path = DATA_DIR / "properties_dataset"

@@ -1,11 +1,12 @@
 import hashlib
 import io
 import logging
-from pathlib import Path
 from typing import List
 
+import numpy as np
+from lancedb.pydantic import LanceModel, vector
 from PIL import Image
-from pydantic import BaseModel, Field, HttpUrl, computed_field
+from pydantic import BaseModel, Field, computed_field
 
 from homematch.config import IMAGES_DIR
 
@@ -13,12 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 class PropertyListingBase(BaseModel):
-    page_source: HttpUrl
+    page_source: str
     resource_title: str
     resource_country: str
     operation_type: str
     active: bool
-    url: HttpUrl
+    url: str
     title: str
     normalized_title: str
     zone: str
@@ -26,21 +27,30 @@ class PropertyListingBase(BaseModel):
     ad_text: str
     basic_info: List[str]
     last_update: str
-    main_image_url: HttpUrl
+    main_image_url: str
     scraped_ts: str
 
     @computed_field  # type: ignore
     @property
     def identificator(self) -> str:
-        return hashlib.sha256(self.url.unicode_string().encode()).hexdigest()[:8]
+        return hashlib.sha256(self.url.encode()).hexdigest()[:8]
+
+    @computed_field  # type: ignore
+    @property
+    def text_description(self) -> str:
+        basic_info_text = ",".join(self.basic_info)
+        return f"""
+        Zona: {self.zone}, Precio: {self.current_price} €.
+        Caracteristicas: {basic_info_text}
+        """
 
 
 class PropertyListing(PropertyListingBase):
-    images_dir: Path = Field(IMAGES_DIR, description="Directory to store images")
+    images_dir: str = Field(str(IMAGES_DIR), description="Directory to store images")
 
     @property
-    def image_path(self) -> Path:
-        return self.images_dir / f"{self.identificator}.jpg"
+    def image_path(self) -> str:
+        return str(self.images_dir) + f"/{self.identificator}.jpg"
 
     def load_image(self) -> Image.Image:
         try:
@@ -55,9 +65,18 @@ class PropertyListing(PropertyListingBase):
         img.save(buf, format="PNG")
         return buf.getvalue()
 
+    @classmethod
+    def pil_to_numpy(cls, img: Image.Image) -> np.ndarray:
+        return np.array(img)
+
 
 class PropertyData(PropertyListing):
-    image_bytes: bytes
+    class Config:
+        arbitrary_types_allowed = True
 
-    def to_pil(self):  # type: ignore
-        return Image.open(io.BytesIO(self.image))
+    image: Image.Image
+
+
+class ImageData(PropertyListing, LanceModel):
+    vector: vector(512)  # type: ignore
+    image_bytes: bytes
