@@ -39,10 +39,19 @@ class PropertyListingBase(BaseModel):
     @property
     def text_description(self) -> str:
         basic_info_text = ",".join(self.basic_info)
-        return f"""
-        Zona: {self.zone}, Precio: {self.current_price} €.
-        Caracteristicas: {basic_info_text}
-        """
+        basic_info_text = basic_info_text.replace("habs", "bedrooms")
+        basic_info_text = basic_info_text.replace("baños", "bathrooms")
+        basic_info_text = basic_info_text.replace("baño", "bathroom")
+        basic_info_text = basic_info_text.replace("m²", "square meters")
+        basic_info_text = basic_info_text.replace("planta", "floor")
+        basic_info_text = basic_info_text.replace("Bajo", "0 floor")
+
+        description = ""
+        description += f"Zone: {self.zone}."
+        description += f"Price: {self.current_price} euros."
+        description += f"Features: {basic_info_text}"
+
+        return description
 
 
 class PropertyListing(PropertyListingBase):
@@ -78,5 +87,5 @@ class PropertyData(PropertyListing):
 
 
 class ImageData(PropertyListing, LanceModel):
-    vector: vector(512)  # type: ignore
+    vector: vector(768)  # type: ignore
     image_bytes: bytes
