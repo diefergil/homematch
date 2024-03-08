@@ -28,19 +28,19 @@ https://www.pisos.com/viviendas/alicante_alacant/
 
 Update the SCRAPER_URLS variable in the configuration file to include the URL(s) you want to scrape. Here's how to modify it:
 
-    ```python
-        SCRAPER_URLS=[https://www.pisos.com/viviendas/alicante_alacant/]
-    ```
+```python
+SCRAPER_URLS=[https://www.pisos.com/viviendas/alicante_alacant/]
+```
 
 ### 3. Execute the Scraper
 
 Initiate the scraping process using the following command:
 
-    ```bash
-    make crawl_landing_pisos
-    ```
+```bash
+make crawl_landing_pisos
+```
 
-    A new json file will be created located in data/crawler_data
+A new json file will be created located in data/crawler_data
 
 This command triggers the scraper, which collects data from the specified URL and saves it in a JSON file located at data/crawler_data.
 
@@ -51,6 +51,7 @@ Once the scraping is complete, prepare the dataset by running:
 ```bash
 python scripts/prepare_data.py
 ```
+
 This script transforms the raw data into a structured format suitable for analysis and storage.
 
 ### 5. Populate the Database
