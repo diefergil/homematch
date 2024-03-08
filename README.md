@@ -64,4 +64,6 @@ python scripts/populate_database.py
 
 With the data successfully loaded, run the application to start querying and analyzing your collected data.
 
-![Example](./assets/example.png)
+![Example 1](./assets/example_1.png)
+![Example 2](./assets/example_2.png)
+![Example 3](./assets/example_3.png)
