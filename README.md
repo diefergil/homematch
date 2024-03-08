@@ -2,8 +2,6 @@
 
 Welcome to Homematach, a simple tool designed to scrape real estate data and streamline the process of data collection and analysis. Follow the steps below to install, configure, and utilize Homematach effectively.
 
-
-
 ## Installation
 
 Ensure you have Poetry installed on your machine to manage dependencies and environments. To install Homematach, use the following command:
@@ -22,7 +20,7 @@ To successfully use Homematach, follow these step-by-step instructions:
 
 Choose a URL from fotocasa.com that you wish to scrape. For instance, you can use the following URL for properties in Alicante:
 
-https://www.pisos.com/viviendas/alicante_alacant/
+<https://www.pisos.com/viviendas/alicante_alacant/>
 
 ### 2. Configure the Scraper
 

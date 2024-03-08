@@ -29,10 +29,13 @@ def find_images(query: str) -> List[Tuple[Any, str]]:
 
 
 def update_description(image_info: Optional[Tuple[Any, str]]) -> str:
-    if image_info is None:
+    print(image_info)
+    print("asd")
+    if image_info is None or image_info[0] is None:
         return "Select an image to see its description"
-    _, description = image_info
-    return description
+    else:
+        _, description = image_info
+        return description
 
 
 with gr.Blocks() as demo:
@@ -51,9 +54,7 @@ with gr.Blocks() as demo:
             object_fit="contain",
             height="auto",
         )
-        description_label: gr.Label = gr.Label("Select an image to see its description")
 
     b1.click(find_images, inputs=vector_query, outputs=gallery)
-    gallery.change(update_description, inputs=gallery, outputs=description_label)
 
 demo.launch(server_name="127.0.0.1", inline=False)
